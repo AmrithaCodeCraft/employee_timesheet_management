@@ -1,38 +1,47 @@
-const router = require("express").Router();
-const { User } = require("../models/userModel");
-const bcrypt = require("bcrypt");
-const Joi = require("joi");
+import express from "express";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import User from "../models/userModel.js";
+const router = express.Router();
 
-router.post("/", async (req, res) => {
-	try {
-		const { error } = validate(req.body);
-		if (error)
-			return res.status(400).send({ message: error.details[0].message });
 
-		const user = await User.findOne({ email: req.body.email });
-		if (!user)
-			return res.status(401).send({ message: "Invalid Email or Password" });
+/// Login Route
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body; // Extract email and password from request body
 
-		const validPassword = await bcrypt.compare(
-			req.body.password,
-			user.password
-		);
-		if (!validPassword)
-			return res.status(401).send({ message: "Invalid Email or Password" });
+    const user = await User.findOne({ email });
+    if (!user) return res.status(401).json({ message: "Invalid Email or Password" });
 
-		const token = user.generateAuthToken();
-		res.status(200).send({ data: token, message: "logged in successfully" });
-	} catch (error) {
-		res.status(500).send({ message: "Internal Server Error" });
-	}
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ message: "Invalid Email or Password" });
+
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+    res.json({ token, user: { id: user._id, name: user.name, role: user.role } });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
-const validate = (data) => {
-	const schema = Joi.object({
-		email: Joi.string().email().required().label("Email"),
-		password: Joi.string().required().label("Password"),
-	});
-	return schema.validate(data);
-};
 
-module.exports = router;
+// Register Route
+router.post("/register", async (req, res) => {
+    const { name, email, password, role } = req.body;
+  
+    try {
+      let user = await User.findOne({ email });
+      if (user) return res.status(400).json({ message: "User already exists" });
+  
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user = new User({ name, email, password: hashedPassword, role });
+  
+      await user.save();
+      res.status(201).json({ message: "User registered successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+  });  
+
+  export default router;
+

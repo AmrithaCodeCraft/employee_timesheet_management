@@ -1,34 +1,25 @@
-require("dotenv").config();
-const express = require("express");
-// const mongoose = require("mongoose");
-const cors = require("cors");
-const app = express();
-const connection = require("./config/db");
-const userRoutes = require("./routes/users");
-const authRoutes = require("./routes/auth");
+import express from "express";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import cors from "cors";
+import authRoutes from "./routes/auth.js";
+import connectDB from "./config/db.js"; // ✅ Import connectDB (NOT { connection })
 
-connection();
-// const connection = require("./config/db");
+dotenv.config();
+
+const app = express();
+connectDB(); // ✅ Call the database connection function
 
 //middlewares
 app.use(express.json());
 app.use(cors());
 
-// routes
-app.use("/api/users", userRoutes);
-app.use("/api/auth", authRoutes);
+// Route imports
+app.use("/api/auth", authRoutes); // Add auth routes
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
-// // 🔥 Connect to MongoDB Atlas
-// mongoose.connect(process.env.MONGO_URI, {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// })
-// .then(() => console.log("✅ Connected to MongoDB Atlas"))
-// .catch((err) => console.error("❌ MongoDB Connection Error:", err));
-
-// // Routes
-// app.use("/api/auth", require("./routes/authRoutes"));
-// app.use("/api/timesheet", require("./routes/timesheetRoutes"));
+app.get("/", (req, res) => {
+  res.send("API is running...");
+});

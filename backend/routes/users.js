@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { User, validate } = require("../models/userModel");
+const { User, validate } = require("../models/userModel.js");
 const bcrypt = require("bcrypt");
 
 router.post("/", async (req, res) => {
@@ -24,4 +24,4 @@ router.post("/", async (req, res) => {
 	}
 });
 
-module.exports = router;
+export default router;
