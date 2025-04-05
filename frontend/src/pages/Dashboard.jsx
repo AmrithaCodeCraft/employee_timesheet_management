@@ -1,29 +1,3 @@
-// import React from "react";
-// import { useAuth } from "../hooks/useAuth";  // ✅ Import useAuth
-
-// const Dashboard = () => {
-//   const user = useAuth();
-
-//   if (!user) return <p>Loading...</p>;
-
-//   return (
-//     <div className="p-6">
-//       <h1 className="text-3xl font-bold">Welcome, {user.name}!</h1>
-//       <button
-//         onClick={() => {
-//           localStorage.removeItem("token");
-//           window.location.href = "/login";
-//         }}
-//         className="bg-red-500 text-white p-2 rounded mt-4"
-//       >
-//         Logout
-//       </button>
-//     </div>
-//   );
-// };
-
-// export default Dashboard;
-
 import { useState, useEffect } from "react";
 import { Button } from "../components/ui/button";
 
@@ -36,6 +10,29 @@ export default function Dashboard() {
     minutes: 0,
     seconds: 0,
   });
+
+  const [payroll, setPayroll] = useState(null);
+
+useEffect(() => {
+  const fetchPayroll = async () => {
+    const start = new Date();
+    start.setDate(1);
+    const end = new Date();
+
+    const res = await fetch(
+      `http://localhost:5000/api/timesheet/payroll?start=${start.toISOString()}&end=${end.toISOString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+    const data = await res.json();
+    setPayroll(data.payroll);
+  };
+
+  fetchPayroll();
+}, []);
 
   useEffect(() => {
     let interval;
@@ -71,17 +68,21 @@ export default function Dashboard() {
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    const totalSeconds = Math.floor(diff / 1000);
 
     setTotalTime({ hours, minutes, seconds });
 
     // Save work log to backend
     fetch("http://localhost:5000/api/timesheet", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", 
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
       body: JSON.stringify({
         startTime,
         endTime: now,
         totalHours: `${hours}h ${minutes}m ${seconds}s`,
+        totalSeconds,
       }),
     });
   };
@@ -106,7 +107,13 @@ export default function Dashboard() {
             Start Work
           </Button>
         )}
-
+        
+        {payroll && (
+  <div className="mt-4 text-gray-700">
+    <p><strong>Monthly Hours:</strong> {payroll.totalHours} hrs</p>
+    <p><strong>Estimated Pay:</strong> ₹{payroll.totalPay}</p>
+  </div>
+)}
         <div className="mt-4 text-gray-700">
           {startTime && <p>Start Time: {startTime.toLocaleTimeString()}</p>}
           {endTime && <p>End Time: {endTime.toLocaleTimeString()}</p>}

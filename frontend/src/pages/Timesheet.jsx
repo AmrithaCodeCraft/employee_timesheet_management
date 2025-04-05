@@ -4,7 +4,12 @@ export default function Timesheet() {
   const [timesheets, setTimesheets] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/timesheet")
+    const token = localStorage.getItem("token");
+    fetch("http://localhost:5000/api/timesheet", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => setTimesheets(data));
   }, []);

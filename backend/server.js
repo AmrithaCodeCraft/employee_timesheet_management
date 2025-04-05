@@ -3,7 +3,10 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
-import connectDB from "./config/db.js"; // ✅ Import connectDB (NOT { connection })
+import connectDB from "./config/db.js"; //  Import connectDB (NOT { connection })
+import timesheetRoutes from "./routes/timesheetRoutes.js";
+import workRoutes from "./routes/workRoutes.js";
+import payrollRoutes from "./routes/payrollRoutes.js";
 
 dotenv.config();
 
@@ -16,6 +19,9 @@ app.use(cors());
 
 // Route imports
 app.use("/api/auth", authRoutes); // Add auth routes
+app.use("/api/timesheet", timesheetRoutes);
+app.use("/api/work", workRoutes);
+app.use("/api/payroll", payrollRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
