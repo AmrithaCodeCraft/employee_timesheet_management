@@ -1,10 +1,9 @@
-import User from "../models/userModel.js"; 
-import bcrypt from "bcryptjs"; 
+import User from "../models/User.js";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv"; 
+import dotenv from "dotenv";
 
-dotenv.config(); 
-
+dotenv.config();
 
 // REGISTER NEW USER
 exports.register = async (req, res) => {
@@ -38,10 +37,13 @@ exports.login = async (req, res) => {
 
     // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+    if (!isMatch)
+      return res.status(400).json({ message: "Invalid credentials" });
 
     // Generate JWT token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     res.status(200).json({ message: "Login successful", token, user });
   } catch (error) {

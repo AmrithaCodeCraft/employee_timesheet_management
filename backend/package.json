@@ -23,6 +23,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.15.0",
     "mongoose": "^8.12.2",
+    "nodemailer": "^6.10.0",
     "react-router-dom": "^7.4.0"
   },
   "devDependencies": {
