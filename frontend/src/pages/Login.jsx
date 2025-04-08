@@ -26,11 +26,14 @@ export default function Login() {
 
       const { token, user } = res.data;
 
-      console.log("Login success:", user); // 🪵 Debug output
+      console.log("Login success:", user); // Debug output
 
       localStorage.setItem("token", token);
       localStorage.setItem("role", user.role);
       localStorage.setItem("userId", user.id);
+
+      // localStorage.setItem("token", res.data.token);
+      // localStorage.setItem("userId", res.data.userId);
 
       if (user.role === "admin") navigate("/AdminPanel");
       else navigate("/Dashboard");

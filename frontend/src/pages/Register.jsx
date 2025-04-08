@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { Button } from "../components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
 export default function Register() {
@@ -11,6 +11,7 @@ export default function Register() {
     password: "",
     role: "employee",
   });
+
   const navigate = useNavigate();
 
   const handleRegister = async () => {
@@ -21,7 +22,7 @@ export default function Register() {
         body: JSON.stringify(form),
       });
 
-      const data = await res.json(); // Get server response
+      const data = await res.json();
 
       if (res.ok) {
         alert("Registration Successful!");
@@ -35,50 +36,71 @@ export default function Register() {
   };
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center bg-gradient-to-r from-rose-600 to-pink-400">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-[400px]">
-        <h2 className="text-2xl font-bold text-center mb-4">Register</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-rose-600 to-pink-400">
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        <h2 className="text-2xl font-bold text-center mb-6">Create an account</h2>
 
-        <Label>Full Name</Label>
-        <Input
-          type="text"
-          value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-        />
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="name">Full Name</Label>
+            <Input
+              id="name"
+              name="name"
+              placeholder="Full Name"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+            />
+          </div>
 
-        <Label>Email</Label>
-        <Input
-          type="email"
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-        />
+          <div>
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              placeholder="email@example.com"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+            />
+          </div>
 
-        <Label>Password</Label>
-        <Input
-          type="password"
-          value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
-        />
+          <div>
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              placeholder="••••••••"
+              value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+            />
+          </div>
 
-        <Label>Role</Label>
-        <select
-          className="w-full border p-2 rounded bg-white border-gray-300"
-          value={form.role}
-          onChange={(e) => setForm({ ...form, role: e.target.value })}
-        >
-          <option value="employee">Employee</option>
-          <option value="admin">Admin</option>
-        </select>
+          <div>
+            <Label htmlFor="role">Role</Label>
+            <select
+              id="role"
+              name="role"
+              className="w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              value={form.role}
+              onChange={(e) => setForm({ ...form, role: e.target.value })}
+            >
+              <option value="employee">Employee</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
 
-        <Button
-          className="w-full mt-4 bg-blue-500 text-white hover:bg-indigo-500 transition"
-          onClick={handleRegister}
-        >
-          Sign Up
-        </Button>
-        <p className="text-center text-black mt-4 text-sm">
-        Already have an account? <a href="/login" className="underline">Login</a>
-        </p>
+          <Button className="w-full" onClick={handleRegister}>
+            Register
+          </Button>
+
+          <p className="text-sm text-center mt-4 text-gray-600">
+            Already have an account?{" "}
+            <a href="/login" className="text-blue-600 hover:underline">Login</a>
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -1,29 +1,22 @@
-import express from "express";
 import Timesheet from "../models/timesheetModel.js";
-import { verifyToken } from "../middleware/authMiddleware.js";
-import { startWork, stopWork } from "../controllers/workController.js";
 
-const router = express.Router();
-
-// Start Work
-router.post("/start", verifyToken, async (req, res) => {
+export const startWork = async (req, res) => {
   try {
-    const newSession = new WorkSession({
-      userId: req.user.id,
+    const newSession = new Timesheet({
+      user: req.user._id,
       startTime: new Date(),
     });
     await newSession.save();
     res.status(201).json(newSession);
   } catch (error) {
-    res.status(500).json({ message: "Failed to start work" });
+    res.status(500).json({ message: "Failed to start work", error });
   }
-});
+};
 
-// Stop Work
-router.post("/stop", verifyToken, async (req, res) => {
+export const stopWork = async (req, res) => {
   try {
-    const session = await WorkSession.findOne({
-      userId: req.user.id,
+    const session = await Timesheet.findOne({
+      user: req.user._id,
       endTime: null,
     }).sort({ startTime: -1 });
 
@@ -40,13 +33,11 @@ router.post("/stop", verifyToken, async (req, res) => {
     session.endTime = endTime;
     session.totalSeconds = totalSeconds;
     session.totalMinutes = totalMinutes;
-    session.totalHours = totalHours;
+    session.totalHours = `${totalHours}:${totalMinutes % 60}`; // Format HH:MM
 
     await session.save();
     res.status(200).json(session);
   } catch (error) {
-    res.status(500).json({ message: "Failed to stop work" });
+    res.status(500).json({ message: "Failed to stop work", error });
   }
-});
-
-export default router;
+};

@@ -1,128 +1,163 @@
-import { useState, useEffect } from "react";
-import { Button } from "../components/ui/button";
+import React, { useEffect, useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import Sidebar from "@/components/SidebarEmployee";
+import axios from "axios";
 
-export default function Dashboard() {
-  const [isWorking, setIsWorking] = useState(false);
+const Dashboard = () => {
   const [startTime, setStartTime] = useState(null);
-  const [endTime, setEndTime] = useState(null);
-  const [totalTime, setTotalTime] = useState({
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  });
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const intervalRef = useRef(null);
 
-  const [payroll, setPayroll] = useState(null);
+  const [logs, setLogs] = useState([]);
 
-useEffect(() => {
-  const fetchPayroll = async () => {
-    const start = new Date();
-    start.setDate(1);
-    const end = new Date();
+  const [monthlyHours, setMonthlyHours] = useState(0);
+  const [monthlyMinutes, setMonthlyMinutes] = useState(0);
+  const [monthlySeconds, setMonthlySeconds] = useState(0);
+  const hourlyRate = 150;
 
-    const res = await fetch(
-      `http://localhost:5000/api/timesheet/payroll?start=${start.toISOString()}&end=${end.toISOString()}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
-    const data = await res.json();
-    setPayroll(data.payroll);
-  };
+  const currentDate = new Date();
+  const formattedDate = currentDate.toLocaleDateString("en-GB");
+  const day = currentDate.toLocaleDateString("en-US", { weekday: "long" });
 
-  fetchPayroll();
-}, []);
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    let interval;
-    if (isWorking) {
-      interval = setInterval(() => {
-        const now = new Date();
-        const diff = now - startTime; // Time difference in milliseconds
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    }
+  }, []);
 
-        const hours = Math.floor(diff / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+  useEffect(() => {
+    const fetchLogs = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`http://localhost:5000/api/timesheet/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setLogs(response.data); // Show these in UI
+      } catch (err) {
+        console.error("Failed to fetch timesheets", err);
+      }
+    };
+  
+    fetchLogs();
+  }, []);  
+  
+  useEffect(() => {
+    const storedStart = localStorage.getItem("startTime");
+    if (storedStart) {
+      const start = new Date(storedStart);
+      setStartTime(start);
 
-        setTotalTime({ hours, minutes, seconds });
+      const secondsElapsed = Math.floor((new Date() - start) / 1000);
+      setElapsedTime(secondsElapsed);
+
+      intervalRef.current = setInterval(() => {
+        setElapsedTime((prev) => prev + 1);
       }, 1000);
     }
-    return () => clearInterval(interval);
-  }, [isWorking, startTime]);
+
+    fetchSummary();
+
+    return () => clearInterval(intervalRef.current);
+  }, []);
 
   const handleStart = () => {
     const now = new Date();
-    setIsWorking(true);
     setStartTime(now);
-    setEndTime(null);
+    localStorage.setItem("startTime", now.toISOString());
+
+    intervalRef.current = setInterval(() => {
+      setElapsedTime((prev) => prev + 1);
+    }, 1000);
   };
 
-  const handleStop = () => {
-    const now = new Date();
-    setIsWorking(false);
-    setEndTime(now);
-
-    // Calculate total work time
-    const diff = now - startTime;
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-    const totalSeconds = Math.floor(diff / 1000);
-
-    setTotalTime({ hours, minutes, seconds });
-
-    // Save work log to backend
-    fetch("http://localhost:5000/api/timesheet", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", 
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({
-        startTime,
-        endTime: now,
-        totalHours: `${hours}h ${minutes}m ${seconds}s`,
-        totalSeconds,
-      }),
-    });
+  const handleStop = async () => {
+    if (!startTime) return;
+  
+    const token = localStorage.getItem("token");
+    if (!token) return;
+  
+    const endTime = new Date();
+    const durationMs = endTime - new Date(startTime);
+    const totalSeconds = Math.floor(durationMs / 1000);
+    const totalMinutes = Math.floor(totalSeconds / 60);
+    const totalHours = Math.floor(totalMinutes / 60);
+  
+    try {
+      await axios.post(
+        "http://localhost:5000/api/timesheet",
+        {
+          startTime,
+          endTime,
+          totalHours,
+          totalMinutes: totalMinutes % 60,
+          totalSeconds: totalSeconds % 60,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+  
+      clearInterval(intervalRef.current);
+      setStartTime(null);
+      setElapsedTime(0);
+      localStorage.removeItem("startTime");
+      fetchSummary();
+    } catch (err) {
+      console.error("Stop work error:", err);
+    }
   };
+  
+
+  const fetchSummary = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await axios.get(`http://localhost:5000/api/timesheet/summary/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setMonthlyHours(res.data.totalHours || 0);
+      setMonthlyMinutes(res.data.totalMinutes || 0);
+      setMonthlySeconds(res.data.totalSeconds || 0);
+    } catch (err) {
+      console.error("Failed to fetch summary:", err);
+    }
+  };
+
+  const formatTime = (seconds) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hrs.toString().padStart(2, "0")}:${mins
+      .toString()
+      .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  const totalWorkedHours =
+    monthlyHours + monthlyMinutes / 60 + monthlySeconds / 3600;
+  const estimatedPay = (totalWorkedHours * hourlyRate).toFixed(2);
 
   return (
-    <div className="w-screen h-screen flex flex-col items-center justify-center bg-gradient-to-r from-teal-600 to-cyan-700">
-      <h1 className="text-3xl font-bold text-white mb-6">Employee Dashboard</h1>
+    <div className="h-screen w-screen flex">
+      <Sidebar />
+      <div className="p-6 space-y-6">
+        <div className="text-2xl font-semibold">Welcome</div>
+        <div className="text-muted-foreground">{formattedDate} | {day}</div>
 
-      <div className="bg-white p-6 rounded-lg shadow-md w-[400px] text-center">
-        {isWorking ? (
-          <Button
-            className="bg-red-500 hover:bg-red-600 transition text-white w-full"
-            onClick={handleStop}
-          >
-            Stop Work
-          </Button>
-        ) : (
-          <Button
-            className="bg-green-500 hover:bg-green-600 transition text-white w-full"
-            onClick={handleStart}
-          >
-            Start Work
-          </Button>
-        )}
+        <Card className="p-6 space-y-4 mt-4">
+          <div className="text-lg font-medium">Working Time</div>
+          <div className="text-4xl font-bold">{formatTime(elapsedTime)}</div>
+          <div className="space-x-4 mt-4">
+            <Button onClick={handleStart} disabled={startTime !== null}>Start Work</Button>
+            <Button onClick={handleStop} disabled={startTime === null}>Stop Work</Button>
+          </div>
+        </Card>
         
-        {payroll && (
-  <div className="mt-4 text-gray-700">
-    <p><strong>Monthly Hours:</strong> {payroll.totalHours} hrs</p>
-    <p><strong>Estimated Pay:</strong> ₹{payroll.totalPay}</p>
-  </div>
-)}
-        <div className="mt-4 text-gray-700">
-          {startTime && <p>Start Time: {startTime.toLocaleTimeString()}</p>}
-          {endTime && <p>End Time: {endTime.toLocaleTimeString()}</p>}
-          <p>
-            <strong>Total Work Time:</strong> {totalTime.hours}h{" "}
-            {totalTime.minutes}m {totalTime.seconds}s
-          </p>
-        </div>
       </div>
     </div>
   );
-}
+};
+
+export default Dashboard;

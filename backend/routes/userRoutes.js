@@ -1,7 +1,15 @@
-const router = require("express").Router();
-const { User, validate } = require("../models/userModel.js");
-const bcrypt = require("bcrypt");
+import express from "express";
+import bcrypt from "bcryptjs";
+import { protect } from "../middleware/authMiddleware.js";
+import { getUserProfile } from "../controllers/userController.js";
+import { User, validate } from "../models/userModel.js";      
 
+const router = express.Router();
+
+// Profile route
+router.get('/profile', protect, getUserProfile); 
+
+// Registration route
 router.post("/", async (req, res) => {
   try {
     const { error } = validate(req.body);
