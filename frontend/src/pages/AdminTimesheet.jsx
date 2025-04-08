@@ -35,7 +35,7 @@ const AdminTimesheet = () => {
     <div className="flex w-screen h-screen">
       <Sidebar />
       <div className="p-6 w-full">
-        <h2 className="text-2xl font-semibold mb-4">🗂️ All Employee Logs</h2>
+        <h2 className="text-2xl font-semibold mb-4"> All Employee Logs</h2>
 
         <Card className="p-4 overflow-auto max-h-[75vh]">
           <Table>

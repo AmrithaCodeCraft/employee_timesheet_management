@@ -11,7 +11,7 @@ export default function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // 🔐 Handle Login
+  // Handle Login
   const handleLogin = async (e) => {
     e.preventDefault(); // Prevent page reload
     setError("");
