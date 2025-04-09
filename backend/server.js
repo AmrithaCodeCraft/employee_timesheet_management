@@ -13,11 +13,13 @@ import userRoutes from './routes/userRoutes.js';
 dotenv.config();
 
 const app = express();
-connectDB(); // ✅ Call the database connection function
+connectDB(); // Call the database connection function
 
 //middlewares
 app.use(express.json());
 app.use(cors());
+
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 // Route imports
 app.use("/api/auth", authRoutes); // Add auth routes
@@ -26,7 +28,6 @@ app.use("/api/work", workRoutes);
 app.use("/api/payroll", payrollRoutes);
 app.use("/api/admin", adminRoutes);
 app.use('/api/users', userRoutes);
-
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

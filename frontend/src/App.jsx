@@ -7,7 +7,6 @@ import Payroll from "./pages/Payroll";
 import Profile from "./pages/Profile";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import PrivateRoute from "./utils/PrivateRoute";
-import Unauthorized from "./pages/Unauthorized";
 import AdminPanel from "@/pages/AdminPanel";
 import AdminPayroll from "@/pages/AdminPayroll";
 import AdminTimesheet from "@/pages/AdminTimesheet";

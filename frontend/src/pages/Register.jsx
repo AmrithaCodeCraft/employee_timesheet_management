@@ -36,10 +36,12 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-rose-600 to-pink-400">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-700 to-blue-300">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-6">Create an account</h2>
-    
+        <h2 className="text-2xl font-bold text-center mb-6">
+          Create an account
+        </h2>
+
         <div className="space-y-4">
           <div>
             <Label htmlFor="name">Full Name</Label>
@@ -92,13 +94,18 @@ export default function Register() {
             </select>
           </div>
 
-          <Button className="w-full" onClick={handleRegister}>
+          <Button
+            className="w-full bg-blue-500 text-white font-semibold hover:bg-indigo-500 transition"
+            onClick={handleRegister}
+          >
             Register
           </Button>
 
           <p className="text-sm text-center mt-4 text-gray-600">
             Already have an account?{" "}
-            <a href="/login" className="text-blue-600 hover:underline">Login</a>
+            <a href="/login" className="text-blue-600 hover:underline">
+              Login
+            </a>
           </p>
         </div>
       </div>
