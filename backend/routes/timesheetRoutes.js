@@ -14,10 +14,7 @@ router.post("/", protect, createTimesheet);// Log work session
 router.get("/user/:id", protect, getUserTimesheetLogs); // Employee view
 router.get("/summary/:id", protect, getTimesheetSummary); // Summary by date
 router.get("/admin/all", protect, getAllTimesheets); // Admin view
-
 router.get("/:id", protect, getUserTimesheets); // GET /api/timesheet/:id
-router.get("/summary/:id", protect, getTimesheetSummary); // GET /api/timesheet/summary/:id
 
-router.get("/:id", protect, getUserTimesheets); // generic route
 
 export default router;

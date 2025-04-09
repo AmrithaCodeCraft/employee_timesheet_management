@@ -9,8 +9,6 @@ const Dashboard = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const intervalRef = useRef(null);
 
-  const [logs, setLogs] = useState([]);
-
   const [monthlyHours, setMonthlyHours] = useState(0);
   const [monthlyMinutes, setMonthlyMinutes] = useState(0);
   const [monthlySeconds, setMonthlySeconds] = useState(0);
@@ -25,37 +23,17 @@ const Dashboard = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      navigate("/login");
+      window.location.href = "/login";
     }
   }, []);
 
   useEffect(() => {
-    const fetchLogs = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(`http://localhost:5000/api/timesheet/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setLogs(response.data); // Show these in UI
-      } catch (err) {
-        console.error("Failed to fetch timesheets", err);
-      }
-    };
-  
-    fetchLogs();
-  }, []);  
-  
-  useEffect(() => {
-    const storedStart = localStorage.getItem("startTime");
+    const storedStart = localStorage.getItem(`startTime_${userId}`);
     if (storedStart) {
       const start = new Date(storedStart);
       setStartTime(start);
-
       const secondsElapsed = Math.floor((new Date() - start) / 1000);
       setElapsedTime(secondsElapsed);
-
       intervalRef.current = setInterval(() => {
         setElapsedTime((prev) => prev + 1);
       }, 1000);
@@ -69,7 +47,7 @@ const Dashboard = () => {
   const handleStart = () => {
     const now = new Date();
     setStartTime(now);
-    localStorage.setItem("startTime", now.toISOString());
+    localStorage.setItem(`startTime_${userId}`, now.toISOString());
 
     intervalRef.current = setInterval(() => {
       setElapsedTime((prev) => prev + 1);
@@ -78,20 +56,21 @@ const Dashboard = () => {
 
   const handleStop = async () => {
     if (!startTime) return;
-  
+
     const token = localStorage.getItem("token");
     if (!token) return;
-  
+
     const endTime = new Date();
     const durationMs = endTime - new Date(startTime);
     const totalSeconds = Math.floor(durationMs / 1000);
     const totalMinutes = Math.floor(totalSeconds / 60);
     const totalHours = Math.floor(totalMinutes / 60);
-  
+
     try {
       await axios.post(
         "http://localhost:5000/api/timesheet",
         {
+          user: userId,
           startTime,
           endTime,
           totalHours,
@@ -100,17 +79,16 @@ const Dashboard = () => {
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-  
+
       clearInterval(intervalRef.current);
       setStartTime(null);
       setElapsedTime(0);
-      localStorage.removeItem("startTime");
+      localStorage.removeItem(`startTime_${userId}`);
       fetchSummary();
     } catch (err) {
       console.error("Stop work error:", err);
     }
   };
-  
 
   const fetchSummary = async () => {
     const token = localStorage.getItem("token");
@@ -130,14 +108,16 @@ const Dashboard = () => {
     const hrs = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    return `${hrs.toString().padStart(2, "0")}:${mins
-      .toString()
-      .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+    return `${hrs.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const totalWorkedHours =
-    monthlyHours + monthlyMinutes / 60 + monthlySeconds / 3600;
-  const estimatedPay = (totalWorkedHours * hourlyRate).toFixed(2);
+  const calculateSalary = (hours, minutes) => {
+    let salary = hours * 150;
+    if (minutes >= 30) salary += 75;
+    return salary;
+  };  
+
+  const estimatedPay = calculateSalary(monthlyHours, monthlyMinutes).toFixed(2);
 
   return (
     <div className="h-screen w-screen flex">
@@ -154,7 +134,13 @@ const Dashboard = () => {
             <Button onClick={handleStop} disabled={startTime === null}>Stop Work</Button>
           </div>
         </Card>
-        
+
+        <Card className="p-6 space-y-2">
+          <div className="font-medium text-lg">Monthly Summary</div>
+          <div>Hours: {monthlyHours}</div>
+          <div>Minutes: {monthlyMinutes}</div>
+          <div className="font-semibold text-green-600">Estimated Salary: ₹{estimatedPay}</div>
+        </Card>
       </div>
     </div>
   );

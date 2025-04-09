@@ -66,7 +66,7 @@ export default function AdminPayroll() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Employee</TableHead>
+                <TableHead>Employee Name</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Hours</TableHead>
                 <TableHead>Minutes</TableHead>

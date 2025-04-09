@@ -11,7 +11,7 @@ import Unauthorized from "./pages/Unauthorized";
 import AdminPanel from "@/pages/AdminPanel";
 import AdminPayroll from "@/pages/AdminPayroll";
 import AdminTimesheet from "@/pages/AdminTimesheet";
-import Employees from "@/pages/Employees"; 
+import Employees from "@/pages/AdminEmployeeProfile"; 
 
 function App() {
   
