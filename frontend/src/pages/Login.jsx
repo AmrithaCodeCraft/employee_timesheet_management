@@ -31,7 +31,7 @@ export default function Login() {
       localStorage.setItem("token", token);
       localStorage.setItem("role", user.role);
       localStorage.setItem("userId", user.id);
-
+      
       // localStorage.setItem("token", res.data.token);
       // localStorage.setItem("userId", res.data.userId);
 
@@ -45,6 +45,7 @@ export default function Login() {
   };
 
   return (
+    
     <div className="h-screen w-screen flex items-center justify-center bg-gradient-to-r from-rose-600 to-pink-400">
       <div className="bg-white bg-opacity-100 backdrop-blur-md shadow-lg p-8 rounded-lg w-[400px]">
         <h2 className="text-2xl font-bold text-black text-center mb-4">Welcome</h2>

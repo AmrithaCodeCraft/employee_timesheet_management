@@ -135,12 +135,6 @@ const Dashboard = () => {
           </div>
         </Card>
 
-        <Card className="p-6 space-y-2">
-          <div className="font-medium text-lg">Monthly Summary</div>
-          <div>Hours: {monthlyHours}</div>
-          <div>Minutes: {monthlyMinutes}</div>
-          <div className="font-semibold text-green-600">Estimated Salary: ₹{estimatedPay}</div>
-        </Card>
       </div>
     </div>
   );
