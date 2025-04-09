@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Register() {
   const [form, setForm] = useState({
-    name: "",
+    fullName: "",
     email: "",
     password: "",
     role: "employee",
@@ -39,16 +39,16 @@ export default function Register() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-rose-600 to-pink-400">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold text-center mb-6">Create an account</h2>
-
+    
         <div className="space-y-4">
           <div>
             <Label htmlFor="name">Full Name</Label>
             <Input
-              id="name"
-              name="name"
+              id="fullName"
+              name="fullName"
               placeholder="Full Name"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              value={form.fullName}
+              onChange={(e) => setForm({ ...form, fullName: e.target.value })}
             />
           </div>
 

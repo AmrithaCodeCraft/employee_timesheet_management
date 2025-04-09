@@ -36,14 +36,14 @@ router.post("/login", async (req, res) => {
 
 // Register Route
 router.post("/register", async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { fullName, email, password, role } = req.body;
 
   try {
     let user = await User.findOne({ email });
     if (user) return res.status(400).json({ message: "User already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    user = new User({ name, email, password: hashedPassword, role });
+    user = new User({ fullName, email, password: hashedPassword, role });
 
     await user.save();
     res.status(201).json({ message: "User registered successfully" });
