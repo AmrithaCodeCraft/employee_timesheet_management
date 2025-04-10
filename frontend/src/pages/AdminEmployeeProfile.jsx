@@ -19,11 +19,14 @@ export default function AdminEmployeeProfile() {
       const res = await axios.get("http://localhost:5000/api/admin/all", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setEmployees(res.data);
+  
+      const currentUserId = JSON.parse(atob(token.split(".")[1]))?.id;
+      const filteredEmployees = res.data.filter(emp => emp._id !== currentUserId);
+      setEmployees(filteredEmployees);
     } catch (err) {
       console.error("Error fetching employees:", err);
     }
-  };
+  };  
 
   useEffect(() => {
     fetchEmployees();
@@ -94,7 +97,6 @@ export default function AdminEmployeeProfile() {
                 <td className="py-2 px-4">{emp.fullName}</td>
                 <td className="py-2 px-4">{emp.email}</td>
                 <td className="py-2 px-4 space-x-2">
-                  <Button variant="outline" onClick={() => handleEdit(emp)}>Edit</Button>
                   <Button variant="destructive" onClick={() => handleDelete(emp)}>Delete</Button>
                 </td>
               </tr>

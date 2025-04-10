@@ -74,7 +74,6 @@ export const getAllTimesheets = async (req, res) => {
   }
 };
 
-
 // Get logs for one user
 export const getUserTimesheets = async (req, res) => {
   try {
@@ -87,3 +86,59 @@ export const getUserTimesheets = async (req, res) => {
   }
 };
 
+// Get count of active employees (users who haven't ended their shift)
+export const getActiveEmployees = async (req, res) => {
+  try {
+    const activeUsers = await Timesheet.find({ endTime: null }).distinct("user");
+    res.status(200).json({ count: activeUsers.length });
+  } catch (error) {
+    console.error("Active employees error:", error);
+    res.status(500).json({ message: "Failed to get active employees" });
+  }
+};
+
+// Get today's and this week's total hours
+export const getAdminHoursSummary = async (req, res) => {
+  try {
+    const today = new Date();
+    const startOfToday = new Date(today.setHours(0, 0, 0, 0));
+    const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const timesheets = await Timesheet.find({ endTime: { $ne: null } });
+
+    let todaySeconds = 0;
+    let weekSeconds = 0;
+
+    timesheets.forEach((log) => {
+      const start = new Date(log.startTime);
+      const end = new Date(log.endTime);
+      const duration = (end - start) / 1000;
+
+      if (start >= startOfToday) todaySeconds += duration;
+      if (start >= startOfWeek) weekSeconds += duration;
+    });
+
+    res.status(200).json({
+      todayHours: Math.floor(todaySeconds / 3600),
+      weekHours: Math.floor(weekSeconds / 3600),
+    });
+  } catch (error) {
+    console.error("Hours summary error:", error);
+    res.status(500).json({ message: "Failed to calculate hours" });
+  }
+};
+
+// Get recent completed timesheet entries
+export const getRecentTimesheets = async (req, res) => {
+  try {
+    const timesheets = await Timesheet.find({ endTime: { $ne: null } })
+      .sort({ endTime: -1 })
+      .limit(5)
+      .populate("user", "fullName");
+    res.status(200).json(timesheets);
+  } catch (error) {
+    console.error("Recent timesheets error:", error);
+    res.status(500).json({ message: "Failed to fetch recent timesheets" });
+  }
+};
