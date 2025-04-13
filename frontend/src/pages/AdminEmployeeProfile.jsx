@@ -84,23 +84,26 @@ export default function AdminEmployeeProfile() {
       <div className="flex-1 p-6 bg-gray-50 overflow-auto">
         <h2 className="text-2xl font-semibold mb-6">Manage Employees</h2>
         <table className="min-w-full bg-white shadow-md rounded">
-          <thead>
-            <tr className="text-left border-b">
-              <th className="py-2 px-4">Full Name</th>
-              <th className="py-2 px-4">Email</th>
-              <th className="py-2 px-4">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {employees.map((emp) => (
-              <tr key={emp._id} className="border-b hover:bg-gray-100">
-                <td className="py-2 px-4">{emp.fullName}</td>
-                <td className="py-2 px-4">{emp.email}</td>
-                <td className="py-2 px-4 space-x-2">
-                  <Button variant="destructive" onClick={() => handleDelete(emp)}>Delete</Button>
-                </td>
-              </tr>
-            ))}
+        <thead>
+  <tr className="text-left border-b">
+    <th className="py-2 px-4">Employee ID</th>
+    <th className="py-2 px-4">Full Name</th>
+    <th className="py-2 px-4">Email</th>
+    <th className="py-2 px-4">Actions</th>
+  </tr>
+</thead>
+<tbody>
+  {employees.map((emp) => (
+    <tr key={emp._id} className="border-b hover:bg-gray-100">
+      <td className="py-2 px-4">{emp.employeeId || "-"}</td>
+      <td className="py-2 px-4">{emp.fullName}</td>
+      <td className="py-2 px-4">{emp.email}</td>
+      <td className="py-2 px-4 space-x-2">
+        <Button variant="destructive" onClick={() => handleDelete(emp)}>Delete</Button>
+      </td>
+    </tr>
+  ))}
+
             {employees.length === 0 && (
               <tr>
                 <td colSpan="3" className="text-center py-4 text-gray-500">No employees found.</td>

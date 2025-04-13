@@ -1,4 +1,5 @@
 import { User } from "../models/userModel.js";
+import { generateEmployeeId } from "../utils/generateEmployeeId.js"; // Import the helper function
 
 export const getUserProfile = async (req, res) => {
   try {
@@ -10,10 +11,9 @@ export const getUserProfile = async (req, res) => {
   }
 };
 
-// Get all users (only for admins)
 export const getAllEmployees = async (req, res) => {
   try {
-    const users = await User.find({}, "_id fullName email role");
+    const users = await User.find({}, "_id fullName email role employeeId");
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch users" });

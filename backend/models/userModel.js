@@ -22,14 +22,18 @@ const userSchema = new mongoose.Schema({
     enum: ["admin", "employee"],
     default: "employee",
   },
+  employeeId: {
+    type: String,
+    unique: true,
+    sparse: true, // Only enforce uniqueness when employeeId is present
+  },
 });
 
 export const User = mongoose.model("User", userSchema);
 
-// validate() function for Joi:
 export const validate = (data) => {
   const schema = Joi.object({
-    fullName: Joi.string().required(),  // must match frontend key
+    fullName: Joi.string().required(),
     email: Joi.string().email().required(),
     password: Joi.string().min(6).required(),
     role: Joi.string().valid("admin", "employee").required(),

@@ -25,8 +25,8 @@ export default function Register() {
       const data = await res.json();
 
       if (res.ok) {
-        alert("Registration Successful!");
-        navigate("/login");
+        alert(`Registration Successful!${data.employeeId ? ` Your Employee ID is ${data.employeeId}` : ""}`);
+        navigate("/login");      
       } else {
         alert(data.message || "Registration Failed");
       }

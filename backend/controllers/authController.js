@@ -1,42 +1,93 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { User } from "../models/userModel.js";
+import { Counter } from "../models/counterModel.js";
+import { generateEmployeeId } from "../utils/generateEmployeeId.js"; 
 
+const generateToken = (id, role) => {
+  return jwt.sign({ id, role }, process.env.JWT_SECRET, {
+    expiresIn: "30d",
+  });
+};
+
+// Example login controller
 export const loginUser = async (req, res) => {
-  const { fullName, email, password } = req.body;
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
 
-  try {
-    const existingUser = await User.findOne({ email });
+  if (!user) {
+    return res.status(401).json({ message: "Invalid email or password" });
+  }
 
-    if (!existingUser) {
-      return res.status(404).json({ message: "User not found" });
-    }
+  // Verify password
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    return res.status(401).json({ message: "Invalid email or password" });
+  }
 
-    const isPasswordCorrect = await bcrypt.compare(password, existingUser.password);
+  // Create JWT token
+  const token = jwt.sign(
+    { id: user._id, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: "1h" }
+  );
 
-    if (!isPasswordCorrect) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
+  // Respond with token and user data
+  res.json({
+    token,
+    user: {
+      id: user._id,
+      role: user.role,
+      employeeId: user.employeeId, // You can also include employeeId if needed
+    },
+  });
+};
 
-    const token = jwt.sign(
-      {
-        id: existingUser._id,      // include user ID
-        role: existingUser.role    // include user role
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+
+// Register User with Employee ID logic
+export const registerUser = async (req, res) => {
+  const { fullName, email, password, role } = req.body;
+
+  if (!fullName || !email || !password || !role) {
+    return res.status(400).json({ message: "Please provide all fields" });
+  }
+
+  const userExists = await User.findOne({ email });
+  if (userExists) {
+    return res.status(400).json({ message: "User already exists" });
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  // Get the next employee ID only if role is employee
+  let employeeId = null;
+  if (role === "employee") {
+    const counter = await Counter.findOneAndUpdate(
+      { _id: "employeeId" },
+      { $inc: { seq: 1 } },
+      { new: true, upsert: true }
     );
+    employeeId = `EMP${String(counter.seq).padStart(3, "0")}`;
+  }
 
-    res.status(200).json({
-      message: "Login successful",
-      token,
-      role: existingUser.role,
-      userId: existingUser._id, 
+  const user = await User.create({
+    fullName,
+    email,
+    password: hashedPassword,
+    role,
+    ...(employeeId && { employeeId }),
+  });
+
+  if (user) {
+    res.status(201).json({
+      _id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      role: user.role,
+      employeeId: user.employeeId || null,
+      token: generateToken(user._id, user.role),
     });
-    
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Something went wrong" });
+  } else {
+    res.status(400).json({ message: "Invalid user data" });
   }
 };
