@@ -3,7 +3,6 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { User } from "../models/userModel.js";
 import { registerUser, loginUser } from '../controllers/authController.js'; 
-import { protect } from "../middleware/protect.js";
 
 const router = express.Router();
 router.post('/register', registerUser);

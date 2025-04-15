@@ -77,8 +77,10 @@ const AdminTimesheet = () => {
             </thead>
             <tbody>
               {filteredLogs.length > 0 ? (
-                filteredLogs.map((log) => {
-                  const start = new Date(log.startTime);
+                filteredLogs
+                .filter((log) => log.user?.fullName && log.user?.employeeId)
+                .map((log) => {
+                const start = new Date(log.startTime);
                   const end = log.endTime ? new Date(log.endTime) : null;
 
                   const durationMs = end ? end - start : 0;
@@ -89,7 +91,9 @@ const AdminTimesheet = () => {
 
                   return (
                     <tr key={log._id} className="border-t hover:bg-gray-50">
-                      <td className="px-4 py-2">{log.user?.fullName || "Unknown"}</td>
+                    <td className="px-4 py-2">
+                      {`${log.user.employeeId} - ${log.user.fullName}`}
+                    </td>
                       <td className="px-4 py-2">{start.toLocaleDateString()}</td>
                       <td className="px-4 py-2">{start.toLocaleTimeString()}</td>
                       <td className="px-4 py-2">
