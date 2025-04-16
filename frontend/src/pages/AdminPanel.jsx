@@ -113,6 +113,8 @@ export default function AdminPanel() {
                 <div key={leave._id} className="bg-white p-4 mb-4 rounded shadow border border-gray-200">
                   <p><strong>Employee:</strong> {leave.employeeId} - {leave.fullName}</p>
                   <p><strong>Reason:</strong> {leave.reason}</p>
+                  <p><strong>From:</strong> {new Date(leave.from).toLocaleString()}</p>
+                  <p><strong>To:</strong> {new Date(leave.to).toLocaleString()}</p>
                   <p><strong>Status:</strong> {leave.status}</p>
                   {leave.status === "Pending" && (
                     <div className="mt-2 space-x-2">
