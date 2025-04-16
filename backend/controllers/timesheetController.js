@@ -66,11 +66,12 @@ export const getTimesheetSummary = async (req, res) => {
 // Admin - Get all logs
 export const getAllTimesheets = async (req, res) => {
   try {
-    const timesheets = await Timesheet.find().populate("user", "fullName email");
-    res.status(200).json(timesheets);
-  } catch (error) {
-    console.error("Get All Timesheets Error:", error);
-    res.status(500).json({ message: "Failed to fetch all timesheets" });
+    const timesheets = await Timesheet.find()
+      .populate("user", "employeeId fullName email")
+      .sort({ createdAt: -1 });
+    res.json(timesheets);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch timesheets" });
   }
 };
 
