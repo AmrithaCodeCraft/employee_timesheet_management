@@ -25,7 +25,6 @@ export const assignTask = async (req, res) => {
 
 export const getTasksForEmployee = async (req, res) => {
   try {
-    console.log("User from token:", req.user); 
     const tasks = await Task.find({ employeeId: req.user.employeeId });
     res.json(tasks);
   } catch (error) {

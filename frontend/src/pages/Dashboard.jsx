@@ -158,10 +158,18 @@ const Dashboard = () => {
           <div className="text-lg font-medium">Working Time</div>
           <div className="text-4xl font-bold">{formatTime(elapsedTime)}</div>
           <div className="space-x-4 mt-4">
-            <Button onClick={handleStart} disabled={startTime !== null}>
+            <Button
+              onClick={handleStart}
+              disabled={startTime !== null}
+              className="bg-green-500 hover:bg-green-600"
+            >
               Start Work
             </Button>
-            <Button onClick={handleStop} disabled={startTime === null}>
+            <Button
+              onClick={handleStop}
+              disabled={startTime === null}
+              className="bg-red-500 hover:bg-red-600"
+            >
               Stop Work
             </Button>
           </div>
@@ -185,23 +193,33 @@ const Dashboard = () => {
                 Your Recent Leave Requests
               </h2>
               {leaveStatus.map((leave, index) => (
-  <div key={index}>
-    Your leave from <b>{leave.from ? new Date(leave.from).toLocaleDateString() : "N/A"}</b> to <b>{leave.to ? new Date(leave.to).toLocaleDateString() : "N/A"}</b> for "<b>{leave.reason || "No reason given"}</b>" was{" "}
-    <span
-      className={`font-medium ${
-        leave.status?.toLowerCase() === "approved"
-          ? "text-green-600"
-          : leave.status?.toLowerCase() === "rejected"
-          ? "text-red-600"
-          : "text-yellow-600"
-      }`}
-    >
-      {leave.status?.charAt(0).toUpperCase() + leave.status?.slice(1).toLowerCase()}
-    </span>{" "}
-    by admin.
-  </div>
-))}
-
+                <div key={index}>
+                  Your leave from{" "}
+                  <b>
+                    {leave.from
+                      ? new Date(leave.from).toLocaleDateString()
+                      : "N/A"}
+                  </b>{" "}
+                  to{" "}
+                  <b>
+                    {leave.to ? new Date(leave.to).toLocaleDateString() : "N/A"}
+                  </b>{" "}
+                  for "<b>{leave.reason || "No reason given"}</b>" was{" "}
+                  <span
+                    className={`font-medium ${
+                      leave.status?.toLowerCase() === "approved"
+                        ? "text-green-600"
+                        : leave.status?.toLowerCase() === "rejected"
+                        ? "text-red-600"
+                        : "text-yellow-600"
+                    }`}
+                  >
+                    {leave.status?.charAt(0).toUpperCase() +
+                      leave.status?.slice(1).toLowerCase()}
+                  </span>{" "}
+                  by admin.
+                </div>
+              ))}
             </div>
           ) : (
             <div className="text-sm text-gray-600">
