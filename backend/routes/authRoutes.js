@@ -3,10 +3,14 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { User } from "../models/userModel.js";
 import { registerUser, loginUser } from '../controllers/authController.js'; 
+import { forgotPassword, resetPassword } from "../controllers/authController.js";
 
 const router = express.Router();
 router.post('/register', registerUser);
 router.post('/login', loginUser);
+
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password/:token", resetPassword);
 
 /// Login Route
 router.post("/login", async (req, res) => {

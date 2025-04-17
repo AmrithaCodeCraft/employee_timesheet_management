@@ -31,10 +31,7 @@ export default function Login() {
       localStorage.setItem("token", token);
       localStorage.setItem("role", user.role);
       localStorage.setItem("userId", user.id);
-      
-      // localStorage.setItem("token", res.data.token);
-      // localStorage.setItem("userId", res.data.userId);
-
+   
       if (user.role === "admin") navigate("/AdminPanel");
       else navigate("/Dashboard");
 
@@ -76,6 +73,14 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
               className="mt-1 bg-transparent border border-gray-300 text-black placeholder-white"
             />
+          </div>
+
+          <div className="mb-4">
+          <p className="text-sm text-left mt-2">
+            <a href="/forgot-password" className="text-blue-600 underline">
+              Forgot password?
+            </a>
+          </p>
           </div>
 
           <Button

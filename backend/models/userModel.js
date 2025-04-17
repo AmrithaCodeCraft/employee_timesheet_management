@@ -27,6 +27,14 @@ const userSchema = new mongoose.Schema({
     unique: true,
     sparse: true, // Only enforce uniqueness when employeeId is present
   },
+  resetPasswordToken: {
+    type: String,
+  },
+  resetPasswordExpires: {
+    type: Date,
+  },
+  resetToken: String,
+  resetTokenExpires: Date,
 });
 
 export const User = mongoose.model("User", userSchema);
