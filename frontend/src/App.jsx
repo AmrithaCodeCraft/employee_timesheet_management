@@ -11,6 +11,8 @@ import AdminPanel from "@/pages/AdminPanel";
 import AdminPayroll from "@/pages/AdminPayroll";
 import AdminTimesheet from "@/pages/AdminTimesheet";
 import Employees from "@/pages/AdminEmployeeProfile"; 
+import Task from "./pages/Task"; 
+import AdminEmployeeTasks from "./pages/AdminEmployeeTasks";
 
 function App() {
   
@@ -27,6 +29,9 @@ function App() {
         <Route path="/Reports" element={<AdminPayroll />} />
         <Route path="/AdminTimesheet" element={<AdminTimesheet />} />
         <Route path="/Employees" element={<Employees />} />
+
+        <Route path="/MyTasks" element={<Task />} />
+        <Route path="/AllEmployeeTasks" element={<AdminEmployeeTasks />} />
 
         <Route
           path="/Dashboard"

@@ -9,6 +9,7 @@ import payrollRoutes from "./routes/payrollRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import userRoutes from './routes/userRoutes.js';
 import leaveRoutes from "./routes/leaveRoutes.js";
+import taskRoutes from "./routes/taskRoutes.js";
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.use("/api/payroll", payrollRoutes);
 app.use("/api/admin", adminRoutes);
 app.use('/api/users', userRoutes);
 app.use("/api/leave", leaveRoutes);
+app.use("/api/tasks", taskRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

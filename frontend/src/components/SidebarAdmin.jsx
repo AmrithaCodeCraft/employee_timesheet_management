@@ -7,6 +7,7 @@ export default function SidebarAdmin() {
     { name: "Admin Dashboard", path: "/AdminPanel" },
     { name: "All Timesheets", path: "/AdminTimesheet" },
     { name: "Employee Profiles", path: "/Employees" },
+    { name: "Employee Tasks", path: "/AllEmployeeTasks" },
     { name: "Payroll Reports", path: "/Reports" },
   ];
 

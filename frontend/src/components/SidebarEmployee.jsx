@@ -6,6 +6,7 @@ export default function Sidebar() {
   const menuItems = [
     { name: "Dashboard", path: "/Dashboard" },
     { name: "Timesheet", path: "/Timesheet" },
+    { name: "My Tasks", path: "/MyTasks" },
     { name: "Payroll", path: "/Payroll" },
     { name: "Profile", path: "/Profile" },
   ];
