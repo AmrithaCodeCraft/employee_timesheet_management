@@ -175,16 +175,6 @@ const Dashboard = () => {
           </div>
         </Card>
 
-        {/* Salary Display */}
-        <Card className="p-4 mt-4">
-          <div className="text-md text-gray-700">
-            Estimated Salary This Month:
-          </div>
-          <div className="text-2xl font-bold text-green-700">
-            ₹{estimatedPay}
-          </div>
-        </Card>
-
         {/* Leave Notification */}
         <Card className="p-4 bg-gray-100 border-l-4 border-blue-500 shadow mt-4">
           {leaveStatus && leaveStatus.length > 0 ? (

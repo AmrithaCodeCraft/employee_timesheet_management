@@ -101,8 +101,9 @@ export default function AdminEmployeeTasks() {
                 <th className="p-2 border">Task</th>
                 <th className="p-2 border">Assigned Date</th>
                 <th className="p-2 border">Assigned Time</th>
-                <th className="p-2 border">Status</th>
                 <th className="p-2 border">Completed Time</th>
+                <th className="p-2 border">Status</th>
+
               </tr>
             </thead>
             <tbody>
@@ -120,6 +121,11 @@ export default function AdminEmployeeTasks() {
                     <td className="p-2 border">{task.task}</td>
                     <td className="p-2 border">{formatDate(task.assignedAt)}</td>
                     <td className="p-2 border">{formatTime(task.assignedAt)}</td>
+                    <td className="p-2 border">
+                      {task.completedAt ? formatTime(task.completedAt) : (
+                        <span className="text-gray-500">Pending</span>
+                      )}
+                    </td>
                     <td
                       className={`p-2 border font-semibold ${
                         task.status === "Completed"
@@ -128,11 +134,6 @@ export default function AdminEmployeeTasks() {
                       }`}
                     >
                       {task.status}
-                    </td>
-                    <td className="p-2 border">
-                      {task.completedAt
-                        ? formatTime(task.completedAt)
-                        : <span className="text-gray-500">Pending</span>}
                     </td>
                   </tr>
                 ))

@@ -39,7 +39,7 @@ export const createTimesheet = async (req, res) => {
 // Summary by date for one user (using :id)
 export const getTimesheetSummary = async (req, res) => {
   try {
-    const userId = req.params.id; // <-- Fix here
+    const userId = req.params.id;
 
     const summary = await Timesheet.aggregate([
       { $match: { user: new mongoose.Types.ObjectId(userId) } },
