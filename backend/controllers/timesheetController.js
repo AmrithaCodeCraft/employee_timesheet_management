@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Timesheet from "../models/timesheetModel.js";
+import moment from "moment-timezone";
 
 // Get logs for one user
 export const getUserTimesheetLogs = async (req, res) => {
@@ -17,12 +18,22 @@ export const getUserTimesheetLogs = async (req, res) => {
 // Create a new timesheet log
 export const createTimesheet = async (req, res) => {
   try {
-    const { startTime, endTime, totalHours, totalMinutes, totalSeconds } = req.body;
+    const { startTime, endTime } = req.body;
+
+    // Parse times with Asia/Kolkata timezone
+    const start = moment.tz(startTime, "Asia/Kolkata");
+    const end = moment.tz(endTime, "Asia/Kolkata");
+
+    // Calculate duration
+    const duration = moment.duration(end.diff(start));
+    const totalHours = Math.floor(duration.asHours());
+    const totalMinutes = duration.minutes();
+    const totalSeconds = duration.seconds();
 
     const newEntry = new Timesheet({
       user: req.user.id,
-      startTime,
-      endTime,
+      startTime: start.toDate(),  // store as Date
+      endTime: end.toDate(),
       totalHours,
       totalMinutes,
       totalSeconds,

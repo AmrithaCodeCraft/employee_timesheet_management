@@ -66,7 +66,7 @@ export default function AdminPayroll() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Employee Name</TableHead>
+                <TableHead>Employee</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Hours</TableHead>
                 <TableHead>Minutes</TableHead>
@@ -77,7 +77,7 @@ export default function AdminPayroll() {
               {payrollData.length > 0 ? (
                 payrollData.map((entry, index) => (
                   <TableRow key={index}>
-                    <TableCell>{entry.name}</TableCell>
+                    <TableCell>{entry.employeeId} - {entry.name}</TableCell>
                     <TableCell>{entry.email}</TableCell>
                     <TableCell>{entry.totalHours}</TableCell>
                     <TableCell>{entry.totalMinutes}</TableCell>

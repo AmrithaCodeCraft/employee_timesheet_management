@@ -47,6 +47,7 @@ export const getPayrollReport = async (req, res) => {
       {
         $project: {
           userId: "$_id",
+          employeeId: "$userDetails.employeeId",
           name: "$userDetails.fullName",
           email: "$userDetails.email",
           totalHours: { $floor: { $divide: ["$totalMinutes", 60] } },

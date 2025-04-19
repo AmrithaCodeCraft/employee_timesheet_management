@@ -31,8 +31,12 @@ export default function Timesheet() {
   }, [userId, token]);
 
   const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString("en-GB");
-  const formatTime = (dateStr) => new Date(dateStr).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
-
+  const formatTime = (dateStr) => new Date(dateStr).toLocaleTimeString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  
   const calculateSalary = (hours, minutes) => {
     let salary = hours * 150;
     if (minutes >= 30) salary += 75;

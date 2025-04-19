@@ -22,6 +22,7 @@
     "joi": "^17.13.3",
     "joi-password-complexity": "^5.2.0",
     "jsonwebtoken": "^9.0.2",
+    "moment-timezone": "^0.5.48",
     "mongodb": "^6.15.0",
     "mongoose": "^8.12.2",
     "nanoid": "^5.1.5",
