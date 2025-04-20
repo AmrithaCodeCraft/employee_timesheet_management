@@ -19,9 +19,13 @@ export default function Task() {
   };
 
   const markCompleted = async (id) => {
-    await axios.put(`http://localhost:5000/api/tasks/${id}/complete`, {}, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    await axios.put(
+      `http://localhost:5000/api/tasks/${id}/complete`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
     fetchTasks();
   };
 
@@ -36,7 +40,7 @@ export default function Task() {
     new Date(datetime).toLocaleTimeString("en-GB");
 
   const filteredTasks = selectedDate
-    ? tasks.filter(task => formatDate(task.assignedAt) === selectedDate)
+    ? tasks.filter((task) => formatDate(task.assignedAt) === selectedDate)
     : tasks;
 
   return (
@@ -71,7 +75,8 @@ export default function Task() {
                   <th className="py-2 px-4">Task</th>
                   <th className="py-2 px-4">Assigned Date</th>
                   <th className="py-2 px-4">Assigned Time</th>
-                  <th className="py-2 px-4">Completed Time</th>     <th className="py-2 px-4">Status / Action</th>
+                  <th className="py-2 px-4">Completed Time</th>
+                  <th className="py-2 px-4">Status / Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -81,9 +86,11 @@ export default function Task() {
                     <td className="py-2 px-4">{formatDate(task.assignedAt)}</td>
                     <td className="py-2 px-4">{formatTime(task.assignedAt)}</td>
                     <td className="py-2 px-4">
-                      {task.completedAt
-                        ? formatTime(task.completedAt)
-                        : <span className="text-gray-500">Pending</span>}
+                      {task.completedAt ? (
+                        formatTime(task.completedAt)
+                      ) : (
+                        <span className="text-gray-500">Pending</span>
+                      )}
                     </td>
                     <td className="py-2 px-4">
                       {task.status === "Pending" ? (
@@ -94,7 +101,9 @@ export default function Task() {
                           Mark Completed
                         </button>
                       ) : (
-                        <span className="text-green-600 font-medium">Completed</span>
+                        <span className="text-green-600 font-medium">
+                          Completed
+                        </span>
                       )}
                     </td>
                   </tr>
